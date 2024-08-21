@@ -1,0 +1,49 @@
+As we discussion directly today
+Please consider to support us
+We want to preventive customer claim with 100% guarantee by QR code verification.
+
+
+1. B&A he thong line microwave
+
+ FROM [FOSS1].[dbo].[TBLPRODUCT_DP] where STR_PROCESS_FACTORY='VL-SVD505KF-V4' and COD_SCALE_NO='5M' and convert(date,TMR_DATE)='2024-08-01' order by DATEINSERT desc
+
+
+  --select distinct SERIAL_OUTER from [FOSS1].[dbo].[TBLPRODUCT_DP] where STR_PROCESS_FACTORY='VL-SVD505KF-V4' and COD_SCALE_NO='5M' and convert(date,TMR_DATE)='2024-08-01'
+
+  --STR_SERIAL='4HACG104436' and STR_PROCESS_FACTORY='VL-SVD505KF-V4'
+
+  --VL-SVD505KF .%4HACG104152
+
+
+  --select distinct STR_PROCESS_FACTORY FROM [FOSS1].[dbo].[TBLPRODUCT_DP] where convert(date,TMR_DATE)='2024-08-01'
+
+  -- select distinct COD_SCALE_NO FROM [FOSS1].[dbo].[TBLPRODUCT_DP] where convert(date,TMR_DATE)='2024-08-01'
+
+==== // bang shrink //=========
+ FROM [FOSS1].[dbo].[tblPalletCombine_DP] where 
+--  SERIAL_OUTER in (
+--'VL-SVD505KF .%4HACG104110',
+......................................
+--'VL-SVD505KF .%4HACG104167',
+--'VL-SVD505KF .%4HACG104168',
+--'VL-SVD505KF .%4HACG104169',
+--'VL-SVD505KF .%4HACG104170'
+--  )
+  
+  sModelNo='VL-SVD505KF-V4' and CONVERT(date,dShrinkDate)='2024-08-01' --(tong 348/360 pit)
+  
+  --Source_pallet='210240730015'
+  
+  --sSerialNo='4HACG104436' and sModelNo='VL-SVD505KF-V4'
+=========// lay ra all pallet ID // =========
+  select distinct Source_pallet FROM [FOSS1].[dbo].[tblPalletCombine_DP] where sModelNo='VL-SVD505KF-V4' and CONVERT(date,dShrinkDate)='2024-08-01'
+
+=======// cac dieu kien //======== 
+1. Fa dong shrik xong -> fix location
+2. scm keo hang ra -> out free location
+3. Qc check xong trang thai thay doi
+
+
+chop dau cua IQC
+G:\QC\6. QCG- Common\4. Itakona & B - A Report\7.FY2024\3. IQC - Smart WH Project\B&A
+G:\QC\6. QCG- Common\4. Itakona & B - A Report\7.FY2024\3. IQC - Smart WH Project
