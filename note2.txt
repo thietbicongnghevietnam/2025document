@@ -10,3 +10,6 @@ my team: Share major technical experience, training support skill and improving 
 
 
 Study factory processes and improve and automate steps.
+
+====title
+Standardize the entire OQC system with software to ensure output quality.
