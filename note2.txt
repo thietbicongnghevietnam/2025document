@@ -1,3 +1,8 @@
+duchuan.le@vn.panasonic.com
+vanchung1.nguyen@vn.panasonic.com
+vanhien01.nguyen@vn.panasonic.com
+matsushita.tsuyoshi@vn.panasonic.com
+
 Target FY2024
 Standardize the entire OQC system with software to ensure output quality.
 complete all project keep on time
