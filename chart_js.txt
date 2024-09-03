@@ -1,0 +1,104 @@
+public string GetMonthData()
+        {
+            List<string> months = new List<string>();
+            // Kết nối và truy vấn dữ liệu
+            using (SqlConnection conn = new SqlConnection("Data Source=./;Initial Catalog=DataNhaHang;User ID='sa';Password=''"))
+            {
+                conn.Open();
+                string query = "SELECT MonthName FROM View_Doanhthutheothang"; // Thay đổi câu truy vấn theo cơ sở dữ liệu của bạn
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            months.Add("'" + reader["MonthName"].ToString() + "'");
+                        }
+                    }
+                }
+            }
+            return "[" + string.Join(", ", months) + "]";
+        }
+
+        // Hàm để lấy dữ liệu doanh thu
+        public string GetRevenueData()
+        {
+            List<string> revenues = new List<string>();
+            // Kết nối và truy vấn dữ liệu
+            using (SqlConnection conn = new SqlConnection("Data Source=./;Initial Catalog=DataNhaHang;User ID='sa';Password=''"))
+            {
+                conn.Open();
+                string query = "SELECT Revenue FROM View_Doanhthutheothang"; // Thay đổi câu truy vấn theo cơ sở dữ liệu của bạn
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            revenues.Add(reader["Revenue"].ToString());
+                        }
+                    }
+                }
+            }
+            return "[" + string.Join(", ", revenues) + "]";
+        }
+
+===
+  <canvas id="myChart" style="width:100%;max-width:800px"></canvas>
+==
+  window.onload = function () {
+            var xValues = <%= GetMonthData() %>;
+            var yValues = <%= GetRevenueData() %>;
+
+            // Mảng màu cho từng cột
+            var barColors = [
+                'rgba(255, 99, 132, 0.2)', // Màu đỏ nhạt
+                'rgba(54, 162, 235, 0.2)', // Màu xanh dương nhạt
+                'rgba(255, 206, 86, 0.2)', // Màu vàng nhạt
+                'rgba(75, 192, 192, 0.2)', // Màu xanh lá nhạt
+                'rgba(153, 102, 255, 0.2)', // Màu tím nhạt
+                'rgba(255, 159, 64, 0.2)', // Màu cam nhạt
+                'rgba(255, 99, 132, 0.2)', // Màu đỏ nhạt
+                'rgba(54, 162, 235, 0.2)', // Màu xanh dương nhạt
+                'rgba(255, 206, 86, 0.2)', // Màu vàng nhạt
+                'rgba(75, 192, 192, 0.2)', // Màu xanh lá nhạt
+                'rgba(153, 102, 255, 0.2)', // Màu tím nhạt
+                'rgba(255, 159, 64, 0.2)'  // Màu cam nhạt
+            ];
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        backgroundColor: barColors, // Đặt màu cho từng cột
+                        borderColor: 'rgba(0, 0, 0, 0.1)', // Màu viền của cột
+                        borderWidth: 1, // Độ dày của viền
+                        data: yValues
+                    }]
+                },
+                options: {
+                   legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Doanh số năm 2024'
+                        },
+                    
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tháng'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Doanh thu (VNĐ)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
