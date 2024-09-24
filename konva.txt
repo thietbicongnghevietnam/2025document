@@ -4,3 +4,160 @@
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+<html>
+<head>
+    <script src="https://unpkg.com/konva@9.3.15/konva.min.js"></script>
+    <meta charset="utf-8" />
+    <title>Konva Drag and Drop Multiple Shapes Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <button id="saveBtn">Save Positions</button>
+    <script>
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+
+        var stage = new Konva.Stage({
+            container: 'container',
+            width: width,
+            height: height,
+        });
+
+        var layer = new Konva.Layer();
+
+        var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+        var boxes = [];
+
+        for (var i = 0; i < 6; i++) {
+            var box = new Konva.Rect({
+                x: i * 30 + 50,
+                y: i * 18 + 40,
+                fill: colors[i],
+                stroke: 'black',
+                strokeWidth: 4,
+                draggable: true,
+                width: 100,
+                height: 50,
+            });
+
+            box.on('dragstart', function () {
+                this.moveToTop();
+            });
+
+            box.on('dragmove', function () {
+                document.body.style.cursor = 'pointer';
+            });
+
+            box.on('dblclick dbltap', function () {
+                this.destroy();
+            });
+
+            box.on('mouseover', function () {
+                document.body.style.cursor = 'pointer';
+            });
+
+            box.on('mouseout', function () {
+                document.body.style.cursor = 'default';
+            });
+
+            boxes.push(box); // Lưu hình vào mảng
+            layer.add(box);
+        }
+
+        // Thêm layer vào stage
+        stage.add(layer);
+
+        // Hàm lưu tọa độ
+        document.getElementById('saveBtn').onclick = function () {
+            var positions = boxes.map(function (box) {
+                return {
+                    x: box.x(),
+                    y: box.y(),
+                    fill: box.fill(),
+                };
+            });
+
+            fetch('/konvaltest.aspx', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(positions),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    </script>
+</body>
+</html>
+
+
+======
+
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Serialization;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace WebApplication1
+{
+    public partial class konvaltest : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (IsPostBack) return; // Tránh xử lý trong lần tải trang đầu tiên
+            if (Request.HttpMethod == "POST")
+            {
+                var json = new System.IO.StreamReader(Request.InputStream).ReadToEnd();
+                var serializer = new JavaScriptSerializer();
+                var positions = serializer.Deserialize<List<Shape>>(json);
+
+                SavePositions(positions);
+                Response.ContentType = "application/json";
+                Response.Write("{\"message\":\"Positions saved successfully\"}");
+                Response.End();
+            }
+        }
+
+        private void SavePositions(List<Shape> positions)
+        {
+            //String source = @"Data Source=10.92.186.30;Initial Catalog=Warehouse_BPS;User ID=sa;Password=Psnvdb2013";
+            using (var connection = new SqlConnection(App_Code.DataConn.source))
+            {
+                connection.Open();
+                foreach (var position in positions)
+                {
+                    var command = new SqlCommand("INSERT INTO shapes (x, y, color) VALUES (@x, @y, @color)", connection);
+                    command.Parameters.AddWithValue("@x", position.X);
+                    command.Parameters.AddWithValue("@y", position.Y);
+                    command.Parameters.AddWithValue("@color", position.Fill);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public class Shape
+        {
+            public float X { get; set; }
+            public float Y { get; set; }
+            public string Fill { get; set; }
+        }
+
+
+    }
+}
