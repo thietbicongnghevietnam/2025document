@@ -1,3 +1,7 @@
+===// tai lieu OQC //=====
+Q:\OQC\0.Common (DP.CPT.HD.AIO.SCN.PBX.DECT.WIRELESS.CPT.HD COM.LETS NOTE)\33. OQC improvement Activity\Link weight check system
+G:\QC\03 OQC\Link weight check system
+
 KPI phong: W:\Other\03.Policy\2024\DEV
 
 G:\QC\04 GQC\3. QUALITY REPORT
@@ -9,6 +13,18 @@ G:\QC\6. QCG- Common\4. Itakona & B - A Report\7.FY2024\1.B&A Apr 2024\OQC
 As we discussion directly today
 Please consider to support us
 We want to preventive customer claim with 100% guarantee by QR code verification.
+
+===== //  hien san//=====
+A Minh,
+
+Chỉ cần slide 1, 2, 4, 5, 6.
+Còn lại ko cần.
+
+Phần thiết bị xác nhận lại với Infra xem: máy tính Surface còn ko?
+Dùng mạng sx.
+Barcode reader PE có chưa? Ai là ng cung cấp?
+Mobile device là PDA? Có sẵn chưa? Chưa có thì ai mua? Budget ở đâu, bao giờ có?
+
 
 
 1. B&A he thong line microwave
