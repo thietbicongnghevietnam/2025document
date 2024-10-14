@@ -1,0 +1,480 @@
+<div style="font: 14px Verdana; float: right">
+    <p style="margin-top: 0px; margin-left: 20px;">
+       Chọn file để upload:
+        <asp:FileUpload ID="FileUpload" Width="450px" runat="server" />
+
+        <input type="checkbox" id="checkboxToggle"> <label for="checkboxToggle">cập nhật dữ liệu phân ca</label>
+    </p>
+    <p style="margin-top: 0px; margin-left: 20px;">
+        <input type="button" onserverclick="ImportFromExcel" value="Upload phân ca" runat="server" class="btn btn-primary" />
+         <%--<asp:Button ID="Button1" Text="Upload Mater" OnClick="Upload" runat="server" class="btn btn-primary" />--%>
+
+         <input type="button" id="btnUpdate" onserverclick="updatephanca" value="Cập nhật phân ca" runat="server" class="btn btn-primary" style="margin-left:3px;margin-right:3px; display:none;"  />
+
+        <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;" onserverclick="btnDownloadClick" runat="server">
+            <i class="fas fa-download"></i>Tải file mẫu upload
+        </button>
+    </p>
+    <p>
+        <asp:Label ID="Label1" runat="server"></asp:Label>
+    </p>
+
+</div>
+
+
+===================================================== // //============================================
+protected void ImportFromExcel(object sender, EventArgs e)
+{
+    string checkupload = "0";
+    DataTable dtcheck = new DataTable();
+    // CHECK IF A FILE HAS BEEN SELECTED.
+    if (FileUpload.HasFile)
+    {
+        if (FileUpload.PostedFile.ContentLength > 0)
+        {
+            // Save the uploaded file to the server.
+            FileUpload.SaveAs(Server.MapPath(".") + "\\" + FileUpload.FileName);
+
+            // Set connection string with the Excel file.
+            string excelConnStr = "Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" +
+                                  Server.MapPath(".") + "\\" + FileUpload.FileName +
+                                  "; Extended Properties=Excel 12.0;";
+
+            OleDbConnection excelConn = null;
+            OleDbDataReader objBulkReader = null;
+
+            try
+            {
+                string tenbophan = dr_filter_bophan.Text;
+                string phongban = dr_filter_phongban.Text;
+                DataTable dt_new = new DataTable();
+                dt_new.Columns.Add("CodeEmp", typeof(String));
+                dt_new.Columns.Add("ProfileName", typeof(String));
+                dt_new.Columns.Add("DateStart", typeof(String));
+                dt_new.Columns.Add("DateEnd", typeof(String));
+                dt_new.Columns.Add("TypeVN", typeof(String));
+                dt_new.Columns.Add("thu2", typeof(String));
+                dt_new.Columns.Add("ngaythu2", typeof(String));
+                dt_new.Columns.Add("thu3", typeof(String));
+                dt_new.Columns.Add("ngaythu3", typeof(String));
+                dt_new.Columns.Add("thu4", typeof(String));
+                dt_new.Columns.Add("ngaythu4", typeof(String));
+                dt_new.Columns.Add("thu5", typeof(String));
+                dt_new.Columns.Add("ngaythu5", typeof(String));
+                dt_new.Columns.Add("thu6", typeof(String));
+                dt_new.Columns.Add("ngaythu6", typeof(String));
+                dt_new.Columns.Add("thu7", typeof(String));
+                dt_new.Columns.Add("ngaythu7", typeof(String));
+                dt_new.Columns.Add("ChuNhat", typeof(String));
+                dt_new.Columns.Add("ngaychunhat", typeof(String));
+                dt_new.Columns.Add("WorkHours", typeof(String));
+                dt_new.Columns.Add("userid", typeof(String));
+                dt_new.Columns.Add("Section", typeof(String));
+                dt_new.Columns.Add("week", typeof(String));
+                dt_new.Columns.Add("LineName", typeof(String));
+                dt_new.Columns.Add("DepartMent", typeof(String));
+
+
+
+                // Open connection to Excel file.
+                excelConn = new OleDbConnection(excelConnStr);
+                excelConn.Open();
+
+                // Get data from Excel sheet.
+                OleDbCommand objOleDB = new OleDbCommand("SELECT * FROM [Sheet1$]", excelConn);
+                objBulkReader = objOleDB.ExecuteReader();
+
+                // Check if there is data to process.
+                if (objBulkReader.HasRows)
+                {
+                    // Prepare DataTable to hold Excel data.
+                    DataTable dtExcelData = new DataTable();
+                    dtExcelData.Load(objBulkReader); // Load data into DataTable.
+
+                    // Close the reader and Excel connection.
+                    objBulkReader.Close();
+                    excelConn.Close();
+
+                    // Check if the data already exists in database.
+                    string CodeEmp = "";
+                    String ProfileName = "";
+                    string tungay = null;
+                    string denngay = null;
+                    string TypeVN = "";
+                    string thu2 = "";
+                    string ngaythu2 = "";
+                    string thu3 = "";
+                    string ngaythu3 = "";
+                    string thu4 = "";
+                    string ngaythu4 = "";
+                    string thu5 = "";
+                    string ngaythu5 = "";
+                    string thu6 = "";
+                    string ngaythu6 = "";
+                    string thu7 = "";
+                    string ngaythu7 = "";
+                    string ChuNhat = "";
+                    string ngaychunhat = "";
+
+                    string WorkHours = "";
+                    string userid = "";
+                    string Section = "";
+                    string week = "";
+                    string LineName = "";
+                    string DepartMent = "";
+
+
+                    foreach (DataRow row in dtExcelData.Rows)
+                    {
+                        CodeEmp = row.IsNull(0) ? null : row[0].ToString();
+                        ProfileName = row.IsNull(1) ? null : row[1].ToString();
+                        tungay = row.IsNull(2) ? null : Convert.ToDateTime(row[2]).ToString("yyyy-MM-dd");
+                        denngay = row.IsNull(3) ? null : Convert.ToDateTime(row[3]).ToString("yyyy-MM-dd");
+                        TypeVN = row.IsNull(4) ? null : row[4].ToString();
+                        thu2 = row.IsNull(5) ? null : row[5].ToString();
+                        ngaythu2 = row.IsNull(6) ? null : row[6].ToString();
+                        thu3 = row.IsNull(7) ? null : row[7].ToString();
+                        ngaythu3 = row.IsNull(8) ? null : row[8].ToString();
+                        thu4 = row.IsNull(9) ? null : row[9].ToString();
+                        ngaythu4 = row.IsNull(10) ? null : row[10].ToString();
+                        thu5 = row.IsNull(11) ? null : row[11].ToString();
+                        ngaythu5 = row.IsNull(12) ? null : row[12].ToString();
+                        thu6 = row.IsNull(13) ? null : row[13].ToString();
+                        ngaythu6 = row.IsNull(14) ? null : row[14].ToString();
+                        thu7 = row.IsNull(15) ? null : row[15].ToString();
+                        ngaythu7 = row.IsNull(16) ? null : row[16].ToString();
+                        ChuNhat = row.IsNull(17) ? null : row[17].ToString();
+                        ngaychunhat = row.IsNull(18) ? null : row[18].ToString();
+                        WorkHours = row.IsNull(19) ? null : row[19].ToString();
+                        userid = row.IsNull(20) ? null : row[20].ToString();
+                        Section = tenbophan;// row.IsNull(21) ? null : row[21].ToString();
+                        week = row.IsNull(22) ? null : row[22].ToString();
+                        LineName = row.IsNull(23) ? null : row[23].ToString();
+                        DepartMent = phongban;// row.IsNull(24) ? null : row[23].ToString();
+
+                        dt_new.Rows.Add(CodeEmp, ProfileName, tungay, denngay, TypeVN, thu2, ngaythu2, thu3, ngaythu3, thu4, ngaythu4, thu5, ngaythu5, thu6, ngaythu6, thu7, ngaythu7, ChuNhat, ngaychunhat, WorkHours, userid, Section, week, LineName, DepartMent); 
+
+
+                        // Check if data exists in database.
+                        dtcheck = Db_connect.StoreFillDS("HR_check_upload_phanca", System.Data.CommandType.StoredProcedure, tungay, denngay, tenbophan, phongban);
+
+                        if (dtcheck.Rows.Count > 0 && dtcheck.Rows[0][0].ToString() == "1")
+                        {
+                            // Data already uploaded, set flag and break.
+                            checkupload = "1";
+                            break;
+                        }
+                    }
+
+                    //check ngay dang ky upload theo nhom
+                    DateTime checkngaydangky = DateTime.Parse(tungay);
+                    DateTime checkngayketthuc = DateTime.Parse(denngay);
+                    DateTime currentDate = DateTime.Today;
+
+                    TimeSpan soNgayDangKy = checkngaydangky.Subtract(checkngayketthuc).Duration();
+                    // Lấy số ngày đăng ký neu < 5 thi thong bao user kiem tra lai thong tin
+                    int soNgay = soNgayDangKy.Days;
+
+                    // Xác định ngày hiện tại là thứ mấy
+                    DayOfWeek thuNgayHienTai = currentDate.DayOfWeek;
+                    int checksongaydangky = 0;
+                    // Xác định số ngày kiểm tra dựa trên ngày hiện tại là thứ mấy
+                    switch (thuNgayHienTai)
+                    {
+                        //case DayOfWeek.Monday:
+                        //    checksongaydangky = 1; // Ngày thứ 2
+                        //    break;
+                        case DayOfWeek.Tuesday:
+                            checksongaydangky = 6; // Ngày thứ 3
+                            break;
+                        case DayOfWeek.Wednesday:
+                            checksongaydangky = 5; // Ngày thứ 4
+                            break;
+                        case DayOfWeek.Thursday:
+                            checksongaydangky = 4; //Ngày thứ 5
+                            break;
+                        case DayOfWeek.Friday:
+                            checksongaydangky = 3; // Ngày thứ 5 và thứ 6
+                            break;
+                        case DayOfWeek.Saturday:
+                        case DayOfWeek.Sunday:
+                            checksongaydangky = 2; // Ngày thứ 7 và Chủ nhật
+                            break;
+                    }
+                    // Tính toán số ngày giữa ngày đăng ký và ngày hiện tại
+                    TimeSpan khoangCach = checkngaydangky - currentDate;
+                    if (checkngaydangky < currentDate)
+                    {
+                        Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, Ngày đăng ký không được nhỏ hơn ngày hiện tại!');", true);
+                        dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                    }
+                    else if (checkngayketthuc < currentDate)
+                    {
+                        Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, Ngày kết thúc không được nhỏ hơn ngày hiện tại!');", true);
+                        dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                    }
+                    else if (checkngayketthuc < checkngaydangky)
+                    {
+                        Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, Ngày kết thúc không được nhỏ hơn ngày đăng ký!');", true);
+                        dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                    }
+                    else if (tenbophan == "==ChonBoPhan==") 
+                    {
+                        Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, Bạn chưa chọn bộ phận để upload!');", true);
+                        dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                    }
+                    else if (phongban == "==ChonPhongBan==")
+                    {
+                        Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, Bạn chưa chọn phòng ban để upload!');", true);
+                        dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                    }
+                    else
+                    {
+                        if (((int)thuNgayHienTai + 1) == 2)  //la thu 2
+                        {
+                            if (checkupload == "0")
+                            {
+                                // Connect to SQL Server database.
+                                string sqlConnStr = "Data Source=10.92.186.30;Persist Security Info=False;" +
+                                                    "Initial Catalog=HR_Digital_System;User Id=sa;Password=Psnvdb2013;" +
+                                                    "Connect Timeout=30;";
+
+                                using (SqlConnection con = new SqlConnection(sqlConnStr))
+                                {
+                                    con.Open();
+
+                                    // Initialize SqlBulkCopy.
+                                    using (SqlBulkCopy oSqlBulk = new SqlBulkCopy(con))
+                                    {
+                                        oSqlBulk.DestinationTableName = "PhanCa"; // Table name in database.
+                                        //oSqlBulk.WriteToServer(dtExcelData); // Write data from DataTable to database.
+                                        oSqlBulk.WriteToServer(dt_new);
+                                    }
+                                }
+
+                                lblConfirm.Text = "DATA IMPORTED SUCCESSFULLY.";
+                                lblConfirm.Attributes.Add("style", "color:green");
+                                //Page.ClientScript.RegisterStartupScript(Page.GetType(), "Message", "toastr.success('Thành công!');", true);
+                                Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('OK, Upload thành công!');", true);
+                                dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                            }
+                            else
+                            {
+                                // Data already uploaded message.
+                                Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, kiểm tra lại thông tin!');", true);
+                                dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                            }
+                        }
+                        else if ((khoangCach.Days >= checksongaydangky))
+                        {
+                            if (checkupload == "0")
+                            {
+                                // Connect to SQL Server database.
+                                string sqlConnStr = "Data Source=10.92.186.30;Persist Security Info=False;" +
+                                                    "Initial Catalog=HR_Digital_System;User Id=sa;Password=Psnvdb2013;" +
+                                                    "Connect Timeout=30;";
+
+                                using (SqlConnection con = new SqlConnection(sqlConnStr))
+                                {
+                                    con.Open();
+
+                                    // Initialize SqlBulkCopy.
+                                    using (SqlBulkCopy oSqlBulk = new SqlBulkCopy(con))
+                                    {
+                                        oSqlBulk.DestinationTableName = "PhanCa"; // Table name in database.
+                                        //oSqlBulk.WriteToServer(dtExcelData); // Write data from DataTable to database.
+                                        oSqlBulk.WriteToServer(dt_new); 
+                                    }
+                                }
+
+                                lblConfirm.Text = "DATA IMPORTED SUCCESSFULLY.";
+                                lblConfirm.Attributes.Add("style", "color:green");
+                                //Page.ClientScript.RegisterStartupScript(Page.GetType(), "Message", "toastr.success('Thành công!');", true);
+                                Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('OK, Upload thành công!');", true);
+                                dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                            }
+                            else
+                            {
+                                // Data already uploaded message.
+                                Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, Dữ liệu đã được upload!');", true);
+                                dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                            }
+                        }
+                        else
+                        {
+                            // Ngược lại , truong hop NG => so ngay dang ky trong tuan bi NG
+                            //Console.WriteLine("Ngày đăng ký cách ngày hiện tại nhỏ hơn hoặc bằng " + checksongaydangky + " ngày.");
+                            Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('NG, Bạn kiểm tra lại thông tin đăng ký ngày!');", true);
+                            dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+                        }
+                    }
+
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                lblConfirm.Text = ex.Message;
+                lblConfirm.Attributes.Add("style", "color:red");
+            }
+            finally
+            {
+                // Close and dispose objects.
+                if (objBulkReader != null && !objBulkReader.IsClosed)
+                {
+                    objBulkReader.Close();
+                }
+                if (excelConn != null && excelConn.State == ConnectionState.Open)
+                {
+                    excelConn.Close();
+                }
+
+                // Delete the uploaded file (optional).
+                File.Delete(Server.MapPath(".") + "\\" + FileUpload.FileName);
+
+                // Reload grid or perform other necessary actions.
+                dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);
+            }
+        }
+    }
+}
+
+========================================================
+
+  protected void updatephanca(object sender, EventArgs e)
+  {            
+      DataTable dtupdate = new DataTable();
+      
+      if (FileUpload.HasFile)
+      {
+          if (FileUpload.PostedFile.ContentLength > 0)
+          {
+              // Save the uploaded file to the server.
+              FileUpload.SaveAs(Server.MapPath(".") + "\\" + FileUpload.FileName);
+
+              // Set connection string with the Excel file.
+              string excelConnStr = "Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" +
+                                    Server.MapPath(".") + "\\" + FileUpload.FileName +
+                                    "; Extended Properties=Excel 12.0;";
+
+              OleDbConnection excelConn = null;
+              OleDbDataReader objBulkReader = null;
+
+              try
+              {
+                  string tenbophan = dr_filter_bophan.Text;
+                  string phongban = dr_filter_bophan.Text;
+
+                  // Open connection to Excel file.
+                  excelConn = new OleDbConnection(excelConnStr);
+                  excelConn.Open();
+
+                  // Get data from Excel sheet.
+                  OleDbCommand objOleDB = new OleDbCommand("SELECT * FROM [Sheet1$]", excelConn);
+                  objBulkReader = objOleDB.ExecuteReader();
+                  int count = 0;
+                  // Check if there is data to process.
+                  if (objBulkReader.HasRows)
+                  {
+                      // Prepare DataTable to hold Excel data.
+                      DataTable dtExcelData = new DataTable();
+                      dtExcelData.Load(objBulkReader); // Load data into DataTable.
+
+                      // Close the reader and Excel connection.
+                      objBulkReader.Close();
+                      excelConn.Close();
+
+                      // Check if the data already exists in database.
+                      string manhanvien = null;
+                      string tungay = null;
+                      string denngay = null;
+                      //string tenbophan = null;
+
+                      if (tenbophan == "==ChonBoPhan==")
+                      {
+                          Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('Bạn chưa chọn bộ phận!');", true);
+                          lblConfirm.Text = "Bạn chưa chọn bộ phận!";
+                          lblConfirm.Attributes.Add("style", "color:red");
+                      } 
+                      else if (phongban == "==ChonPhongBan==") 
+                      {
+                          Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('Bạn chưa chọn phòng ban!');", true);
+                          lblConfirm.Text = "Bạn chưa chọn phòng ban!";
+                          lblConfirm.Attributes.Add("style", "color:red");
+                      }
+                      else 
+                      {
+                          foreach (DataRow row in dtExcelData.Rows)
+                          {
+                              manhanvien = row.IsNull(0) ? "" : row[0].ToString();
+                              tungay = row.IsNull(2) ? "" : Convert.ToDateTime(row[2]).ToString("yyyy-MM-dd");
+                              denngay = row.IsNull(3) ? "" : Convert.ToDateTime(row[3]).ToString("yyyy-MM-dd");
+                              //tenbophan = row.IsNull(21) ? "" : row[21].ToString();
+
+                              string cakipt2 = row.IsNull(5) ? "" : row[5].ToString();
+                              string ngayt2 = row.IsNull(6) ? "" : Convert.ToDateTime(row[6]).ToString("yyyy-MM-dd");
+                              string cakipt3 = row.IsNull(7) ? "" : row[7].ToString();
+                              string ngayt3 = row.IsNull(8) ? "" : Convert.ToDateTime(row[8]).ToString("yyyy-MM-dd");
+                              string cakipt4 = row.IsNull(9) ? "" : row[9].ToString();
+                              string ngayt4 = row.IsNull(10) ? "" : Convert.ToDateTime(row[10]).ToString("yyyy-MM-dd");
+                              string cakipt5 = row.IsNull(11) ? "" : row[11].ToString();
+                              string ngayt5 = row.IsNull(12) ? "" : Convert.ToDateTime(row[12]).ToString("yyyy-MM-dd");
+                              string cakipt6 = row.IsNull(13) ? "" : row[13].ToString();
+                              string ngayt6 = row.IsNull(14) ? "" : Convert.ToDateTime(row[14]).ToString("yyyy-MM-dd");
+                              string cakipt7 = row.IsNull(15) ? "" : row[15].ToString();
+                              string ngayt7 = row.IsNull(16) ? "" : Convert.ToDateTime(row[16]).ToString("yyyy-MM-dd");
+                              string cakipt8 = row.IsNull(17) ? "" : row[17].ToString();
+                              string ngayt8 = row.IsNull(18) ? "" : Convert.ToDateTime(row[18]).ToString("yyyy-MM-dd");
+
+                              string sotuan = row.IsNull(22) ? "" : row[22].ToString();
+                              string linename = row.IsNull(23) ? "" : row[23].ToString();
+
+                              // thuc hien viec update tai day
+                              dtupdate = Db_connect.StoreFillDS("HR_update_phanca_theonhom", System.Data.CommandType.StoredProcedure, manhanvien, tungay, denngay, tenbophan, cakipt2, ngayt2, cakipt3, ngayt3, cakipt4, ngayt4, cakipt5, ngayt5, cakipt6, ngayt6, cakipt7, ngayt7, cakipt8, ngayt8, sotuan, linename,phongban);
+                              if (dtupdate.Rows[0][0].ToString() == "1")
+                              {
+                                  //update 1 dong thanh cong
+                                  count = count + 1;
+                              }
+                          }
+                      }
+
+                                              
+                  }
+
+                  lblConfirm.Text = "Tổng bản ghi được cập nhật : "+ count;
+                  //lblConfirm.Attributes.Add("style", "font-size:30px;");
+                  //Page.ClientScript.RegisterStartupScript(this.GetType(), "Message", "alert('Update thành công!');" + count + "/ bản ghi!", true);
+
+              }
+              catch (Exception ex)
+              {
+                  lblConfirm.Text = ex.Message;
+                  lblConfirm.Attributes.Add("style", "color:red");
+              }
+              finally
+              {
+                  // Close and dispose objects.
+                  if (objBulkReader != null && !objBulkReader.IsClosed)
+                  {
+                      objBulkReader.Close();
+                  }
+                  if (excelConn != null && excelConn.State == ConnectionState.Open)
+                  {
+                      excelConn.Close();
+                  }
+
+                  // Delete the uploaded file (optional).
+                  File.Delete(Server.MapPath(".") + "\\" + FileUpload.FileName);
+
+                  // Reload grid or perform other necessary actions.
+                  dt_phanca = Db_connect.StoreFillDS("HR_List_phanca", System.Data.CommandType.StoredProcedure);                        
+              }
+          }
+      }
+  }
+
+===================================
+
+
+
