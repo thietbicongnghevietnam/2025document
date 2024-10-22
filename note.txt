@@ -1,4 +1,5 @@
 ===// tai lieu OQC //=====
+dotpeek decompiler
 Q:\OQC\0.Common (DP.CPT.HD.AIO.SCN.PBX.DECT.WIRELESS.CPT.HD COM.LETS NOTE)\33. OQC improvement Activity\Link weight check system
 G:\QC\03 OQC\Link weight check system
 
