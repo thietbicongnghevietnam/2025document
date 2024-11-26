@@ -1,0 +1,16 @@
+Em gửi nội dung cuộc họp ngày 22.Nov.24:
+
+1.	Thêm chức năng đánh giá theo pallet để có thể chuyển kho SCM: 
++ Những pallet OQC không lấy mẫu thì có thể chuyển kho SCM nhưng trên hệ thống OQC vẫn ở trạng thái đang checking               <Deadline: 29-Nov-24 (IT)>
++ Những  pallet này có thể chuyển sang Jupiter và Jupiter phải link được với hệ thống OQC để biết trạng thái sp OK hay chưa OK  <Deadline: 29-Nov-24 (IT)>
++ OQC/SCM làm rõ quy trình từ hàng chuyển từ FA  SCM  Jupiter                                                                                                           <Deadline: 29-Nov-24 (OQC/SCM)>
+2.	Làm E-map để layout và hiển thị trạng thái của từng pallet                                                                                                                           <Deadline: 6-Dec-24 (FA/IT> 
+3.	Judgment lot: Thỏa mãn 3 điều kiện
+(1)- OQC kiểm tra xong số lượng sampling
+(2)- Kết thúc lô trên weight check
+(3)- Không phát sinh lỗi trên FA và OQC
+ Khi chưa thỏa mãn cả 3 điều kiện trên thì trạng thái sản phẩm vẫn chưa OK
+4.	Thêm chức năng trên hệ thống:
++ Ghép lô/ Tách lô: OQC làm rõ quy trình                                                                                                                                                             <Deadline: 29-Nov-24 (OQC)>
+5.	Thêm chức năng Stop shipment & Release trên hệ thống: 
++ Có thể thay đổi trạng thái hàng từ OK  Cần confirm lại trong trường hợp phát sinh NG trên thị trường/trong nhà máy
